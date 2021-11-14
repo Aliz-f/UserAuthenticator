@@ -3,7 +3,7 @@ from rest_framework import fields, serializers
 # from .models import UserProfile
 from django.contrib.auth.models import User
 
-class UserProfileSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=65, min_length=8, write_only=True)
     email = serializers.EmailField(max_length=255, min_length=4),
     first_name = serializers.CharField(max_length=255, min_length=2)
@@ -26,5 +26,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
 
+class loginSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(max_length=100)
+    password = serializers.CharField(max_length=65, min_length=8, write_only=True)
 
+    class Meta:
+        model = User
+        fields = ['username', 'password']
 
