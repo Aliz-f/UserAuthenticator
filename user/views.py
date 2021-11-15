@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .serializers import UserSerializer, loginSerializer
 
 
@@ -40,3 +40,27 @@ class login_user(generics.GenericAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+class view_user(generics.GenericAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+    authentication_classes = [SessionAuthentication, BasicAuthentication] #***For Authentication -> first session auth, second basic auth
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = User.objects.all()
+        serializer = UserSerializer(user, many = True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+
+
+
+class logout_user(generics.GenericAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+    authentication_classes = [SessionAuthentication, BasicAuthentication] #***For Authentication -> first session auth, second basic auth
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        logout(request)
+        return HttpResponseRedirect(redirect_to='http://127.0.0.1:8000/admin/login/?next=/admin/')
