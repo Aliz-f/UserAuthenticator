@@ -10,8 +10,9 @@ from rest_framework import status
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from .serializers import UserSerializer, loginSerializer
 
+from .serializers import UserProfileSerializer, UserSerializer, loginSerializer, UserSerializer
+from .models import UserProfile
 
 # Create your views here.
 class register_user (generics.GenericAPIView):
@@ -52,8 +53,6 @@ class view_user(generics.GenericAPIView):
         serializer = UserSerializer(user, many = True)
         return Response(serializer.data, status = status.HTTP_200_OK)
 
-
-
 class logout_user(generics.GenericAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
@@ -64,3 +63,16 @@ class logout_user(generics.GenericAPIView):
     def get(self, request):
         logout(request)
         return HttpResponseRedirect(redirect_to='http://127.0.0.1:8000/admin/login/?next=/admin/')
+
+class register_userProfile(generics.GenericAPIView):
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
+
+    def post(self, request):
+        serializer = UserProfileSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+        
+        
