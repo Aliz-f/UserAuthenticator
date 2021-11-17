@@ -14,6 +14,8 @@ from .serializers import *
 from .models import UserProfile
 
 # Create your views here.
+#user and userProfile should be created  in one class view
+
 class register_user (generics.GenericAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
@@ -63,6 +65,9 @@ class logout_user(generics.GenericAPIView):
         logout(request)
         return HttpResponseRedirect(redirect_to='http://127.0.0.1:8000/admin/login/?next=/admin/')
 
+
+
+#user and userProfile should be created  in one class view
 class register_userProfile(generics.GenericAPIView):
     serializer_class = UserProfileSerializer
     queryset = UserProfile.objects.all()
