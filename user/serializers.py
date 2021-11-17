@@ -1,14 +1,8 @@
-from enum import unique
 from rest_framework import fields, serializers
 from .models import UserProfile
 from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
-    # password = serializers.CharField(max_length=65, min_length=8, write_only=True)
-    # email = serializers.EmailField(max_length=255, min_length=4),
-    # first_name = serializers.CharField(max_length=255, min_length=2)
-    # last_name = serializers.CharField(max_length=255, min_length=2)
-
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'password', 'email']
@@ -26,20 +20,11 @@ class UserSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
 class loginSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(max_length=100)
-    password = serializers.CharField(max_length=65, min_length=8, write_only=True)
-
     class Meta:
         model = User
         fields = ['username', 'password']
 
 class UserProfileSerializer (serializers.ModelSerializer):
-    # first_name = serializers.CharField(max_length=255, min_length=2)
-    # last_name = serializers.CharField(max_length=255, min_length=2)
-    # gender = serializers.CharField(max_length=10)
-    # phone_number = serializers.CharField(max_length=11, min_length=11)
-    # password = serializers.CharField(max_length=100)
-    
     user = UserSerializer()
     class Meta:
         model = UserProfile
@@ -48,5 +33,12 @@ class UserProfileSerializer (serializers.ModelSerializer):
     def create(self, validated_data):
         username = validated_data.pop('user')
         myUser = User.objects.create_user(**username)
-        UserProfile.objects.create(user = myUser, **validated_data)
-        return UserProfile
+        return UserProfile.objects.create(user = myUser, **validated_data)
+
+    def validate(self, attrs):
+        phone_number = attrs.get('phone_number', '')
+        if UserProfile.objects.filter(phone_number=phone_number).exists():
+            raise serializers.ValidationError({'Phone_number':('Phone number is already in use')})
+        return super().validate(attrs)
+
+ 
