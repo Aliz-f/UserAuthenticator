@@ -36,7 +36,13 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
-CELERY_BEAT_SCHEDULE = {}
+CELERY_BEAT_SCHEDULE = {
+
+    'create_user_every_minute':{
+        'task':'user.tasks.create_spam_user',
+        'schedule':60.0
+    }
+}
 
 
 # Application definition
@@ -50,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_beat'
 ]
 
 MIDDLEWARE = [
